@@ -34,15 +34,15 @@ def display_graph(data: pd.DataFrame, col: str, save_path: str) -> None:
 def main() -> None:
     try:
         sizes = [100, 200, 500, 1000, 2000]
-        # for size in sizes:
-        #   matrix_a, size_a = read_matrix(size, "matrix_A.txt")
-        #   matrix_b, size_b = read_matrix(size, "matrix_B.txt")
-        #   my_result, size_r = read_matrix(size, "result.txt")
-        #   correct_result = np.dot(matrix_a, matrix_b)
-        #   if np.array_equal(my_result, correct_result):
-        #     print(size, ": all good")
-        #   else:
-        #     print(size, ": smth aint right")
+        for size in sizes:
+          matrix_a, size_a = read_matrix(size, "matrix_A.txt")
+          matrix_b, size_b = read_matrix(size, "matrix_B.txt")
+          my_result, size_r = read_matrix(size, "result.txt")
+          correct_result = np.dot(matrix_a, matrix_b)
+          if np.array_equal(my_result, correct_result):
+            print(size, ": all good")
+          else:
+            print(size, ": smth aint right")
         data = pd.read_csv("data.csv")
         processed_data = process_data(data, sizes)
         print(processed_data)
