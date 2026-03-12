@@ -4,6 +4,7 @@
 #include <iostream>
 
 class Matrix {
+//Класс квадратная матрица для удобства дальнейшей работы с ними
 private:
   int* _elems = nullptr;
   size_t _size = 0;

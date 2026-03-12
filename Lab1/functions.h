@@ -17,6 +17,8 @@ void setup_io()
 
   std::ios_base::sync_with_stdio(false);
 }
+
+//Генерация квадратной матрицы
 Matrix generate_random_matrix(size_t size)
 {
   std::random_device seed;
@@ -33,6 +35,8 @@ Matrix generate_random_matrix(size_t size)
   }
   return m;
 }
+
+//Сохранение матрицы в файл
 void save_matrix(std::filesystem::path file_name, const Matrix& m)
 {
   std::filesystem::path directorypath = "../../../matrix_size_" + std::to_string(m.size());
@@ -43,6 +47,8 @@ void save_matrix(std::filesystem::path file_name, const Matrix& m)
   std::ofstream file(directorypath / file_name);
   file << m.size() << "\n" << m;
 }
+
+//Чтение матрицы из файла
 Matrix read_matrix(std::filesystem::path file_name, size_t size)
 {
   std::filesystem::path directorypath = "../../../matrix_size_" + std::to_string(size);
@@ -62,6 +68,13 @@ Matrix read_matrix(std::filesystem::path file_name, size_t size)
   }
   return m;
 }
+
+/*
+Перемножение матриц и сохранение
+  размеров исходных/полученной матриц
+  времени вычисления
+  числа операций
+*/
 Matrix multiply(const Matrix& lhs, const Matrix& rhs)
 {
   if (lhs.size() != rhs.size()) { throw "Matrix sizes dont match"; }
