@@ -1,6 +1,7 @@
 #ifndef MY_FUNCTIONS_H
 #define MY_FUNCTIONS_H
 
+#include <omp.h>
 #include <iostream>
 #include <random>
 #include <ctime>
@@ -75,27 +76,27 @@ Matrix read_matrix(std::filesystem::path file_name, size_t size)
   времени вычисления
   числа операций
 */
-Matrix multiply(const Matrix& lhs, const Matrix& rhs)
+Matrix multiply(const Matrix& lhs, const Matrix& rhs, int threads)
 {
   if (lhs.size() != rhs.size()) { throw "Matrix sizes dont match"; }
 
-  int operations = 0;
   std::clock_t start = clock();
+  omp_set_num_threads(threads);
 
   Matrix result(lhs.size());
-  for (int i = 0; i < result.size();i++)
+  int i, j, k = 0;
+
+#pragma omp parallel for collapse(3) shared(lhs, rhs, result) private(i, j, k)
+  for (i = 0; i < result.size(); i++)
   {
-    for (int j = 0; j < result.size();j++)
+    for (j = 0; j < result.size(); j++)
     {
-      int temp = 0;
-      for (int k = 0;k < result.size();k++)
+      for (k = 0; k < result.size(); k++)
       {
-        temp += lhs(i, k) * rhs(k, j);
-        operations++;
+        result(i, j) += lhs(i, k) * rhs(k, j);
       }
-      result(i, j) = temp;
     }
-  }
+  } 
 
   double duration = double(clock() - start) / CLOCKS_PER_SEC;
 
@@ -103,9 +104,9 @@ Matrix multiply(const Matrix& lhs, const Matrix& rhs)
   std::fstream file(directorypath / "data.csv", std::ios::app);
   if (std::filesystem::is_empty(directorypath/"data.csv"))
   {
-    file << "size," << "calculation time," << "total operations\n";
+    file << "size," << "threads," << "calculation time\n";
   }
-  file << result.size() << ", " << duration << ", " << operations << "\n";
+  file << result.size() << ", " << threads << ", " << duration << "\n";
   return result;
 }
 

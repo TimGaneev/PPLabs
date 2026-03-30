@@ -1,11 +1,16 @@
    cmake_minimum_required(VERSION 3.12)
 
-   project("Lab1" CXX)
+   project("Lab2" CXX)
 
    set(CMAKE_CXX_STANDARD 20)
    set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-   add_executable(${PROJECT_NAME} "lab1.cpp" "functions.h" "Matrix.h")
+   find_package(OpenMP)
+   add_executable(${PROJECT_NAME} "lab2.cpp" "functions.h" "Matrix.h")
+
+   if(OpenMP_CXX_FOUND)
+      target_link_libraries(${PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+   endif()
 
    if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR
       CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR
@@ -17,3 +22,4 @@
      endif()
      target_compile_options(${PROJECT_NAME} PRIVATE "/W4" "/utf-8")
    endif()
+   

@@ -12,24 +12,24 @@ def read_matrix(size: int, file_name: str) -> list:
 
 
 #Нахождение среднего времени вычисления при разных размерах матриц
-def process_data(base_data: pd.DataFrame, sizes: list[int]) -> pd.DataFrame:
+def process_data(base_data: pd.DataFrame, sizes: list[int], threads: int) -> pd.DataFrame:
     data = []
     for size in sizes:
-        line = base_data[base_data["size"]==size].mean()
-        if line["total operations"] < 0:
-            line["total operations"] = None
+        line = base_data[(base_data["size"]==size) & (base_data["threads"]==threads)].mean()
         data.append(line)
     return pd.DataFrame(data)
 
 
 #Отображение обработанных данных на графике, сохранение графика
-def display_graph(data: pd.DataFrame, col: str, save_path: str) -> None:
-    plt.plot(data["size"], data[col], marker="o")
+def display_graph(data_list: list[pd.DataFrame], save_path: str) -> None:
+    for data in data_list:
+      plt.plot(data["size"], data["calculation time"], label="threads: " + str(int(data["threads"][0])), marker="o")
     plt.grid(True)
     plt.xlabel("Matrix size")
-    plt.ylabel(col)
+    plt.ylabel("calculation time")
+    plt.legend()
     plt.savefig(save_path)
-    #plt.show()
+    plt.show()
     plt.clf()
     return
 
@@ -49,11 +49,13 @@ def main() -> None:
             print("Size ", size, ": smth aint right")
 
         #Обработка данных после перемножения матриц
+        threads = [1, 2, 4, 8, 10]
         data = pd.read_csv("data.csv")
-        processed_data = process_data(data, sizes)
-        print(processed_data)
-        display_graph(processed_data, "total operations", "operations_graph.jpg")
-        display_graph(processed_data, "calculation time", "time_graph.jpg")
+        processed_data = []
+        for threads_num in threads:
+            processed_data.append(process_data(data, sizes, threads_num))
+        #print(processed_data)
+        display_graph(processed_data, "time_graph.jpg")
     except Exception as exc:
       print(f"Возникла ошибка: {exc}")
 
